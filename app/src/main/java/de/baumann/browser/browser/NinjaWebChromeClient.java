@@ -62,6 +62,11 @@ public class NinjaWebChromeClient extends WebChromeClient {
         });
         return true;
     }
+    
+    @Override
+    public void onCloseWindow(WebView window) {
+        ninjaWebView.getBrowserController().removeAlbum((NinjaWebView) window);
+    }
 
     @Override
     public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
