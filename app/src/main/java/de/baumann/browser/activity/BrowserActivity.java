@@ -812,48 +812,70 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         Button omnibox_overflow = findViewById(R.id.omnibox_overflow);
         omnibox_overflow.setOnClickListener(v -> showOverflow());
 
+        omnibox_overflow.setOnTouchListener(new SwipeTouchListener(context) {
+            public void onSwipeTop() { performGesture("setting_gesture_nav_up"); }
+            public void onSwipeBottom() { performGesture("setting_gesture_nav_down"); }
+            public void onSwipeRight() { performGesture("setting_gesture_nav_right"); }
+            public void onSwipeLeft() { performGesture("setting_gesture_nav_left"); }
+        });
         omniBox_overview.setOnTouchListener(new SwipeTouchListener(context) {
-            public void onSwipeTop() { performGesture("setting_gesture_tb_up"); }
-            public void onSwipeBottom() { performGesture("setting_gesture_tb_down"); }
-            public void onSwipeRight() { performGesture("setting_gesture_tb_right"); }
-            public void onSwipeLeft() { performGesture("setting_gesture_tb_left"); }});
+            public void onSwipeTop() { performGesture("setting_gesture_nav_up"); }
+            public void onSwipeBottom() { performGesture("setting_gesture_nav_down"); }
+            public void onSwipeRight() { performGesture("setting_gesture_nav_right"); }
+            public void onSwipeLeft() { performGesture("setting_gesture_nav_left"); }
+        });
         omniBox_tab.setOnTouchListener(new SwipeTouchListener(context) {
             public void onSwipeTop() { performGesture("setting_gesture_nav_up"); }
             public void onSwipeBottom() { performGesture("setting_gesture_nav_down"); }
             public void onSwipeRight() { performGesture("setting_gesture_nav_right"); }
-            public void onSwipeLeft() { performGesture("setting_gesture_nav_left"); }});
+            public void onSwipeLeft() { performGesture("setting_gesture_nav_left"); }
+        });
+        omniBox_text.setOnTouchListener(new SwipeTouchListener(context) {
+            public void onSwipeTop() {performGesture("setting_gesture_tb_up"); }
+            public void onSwipeBottom() { performGesture("setting_gesture_tb_down"); }
+            public void onSwipeRight() {performGesture("setting_gesture_tb_right"); }
+            public void onSwipeLeft() {performGesture("setting_gesture_tb_left"); }
+            public void onTap() {
+                if (omnibox_close.getVisibility() == View.GONE){
+                    omnibox_close.setVisibility(View.VISIBLE);
+                    list_search.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    omnibox_overflow.setVisibility(View.GONE);
+                    omniBox_overview.setVisibility(View.GONE);
+                    omniBox_tab.setVisibility(View.GONE);
+                    String url = ninjaWebView.getUrl();
+                    ninjaWebView.stopLoading();
+                    omniBox_text.setKeyListener(listener);
+                    if (url == null || url.isEmpty()) omniBox_text.setText("");
+                    else omniBox_text.setText(url);
+                    initSearch();
+
+                    HelperUnit.showSoftKeyboard(omniBox_text, BrowserActivity.this);
+                    omniBox_text.selectAll();
+
+                    omniBox_text.setOnFocusChangeListener((v, hasFocus) -> {
+                        if (!hasFocus) {
+                            HelperUnit.hideSoftKeyboard(omniBox_text, context);
+                            omnibox_close.setVisibility(View.GONE);
+                            list_search.setVisibility(View.GONE);
+                            omnibox_overflow.setVisibility(View.VISIBLE);
+                            omniBox_overview.setVisibility(View.VISIBLE);
+                            omniBox_tab.setVisibility(View.VISIBLE);
+                            omniBox_text.setKeyListener(null);
+                            omniBox_text.setEllipsize(TextUtils.TruncateAt.END);
+                            omniBox_text.setText(ninjaWebView.getTitle());
+                            updateOmniBox(); 
+                            omniBox_text.setOnFocusChangeListener(null);
+                        }
+                    });
+                }
+            }
+        });
 
         omniBox_text.setOnEditorActionListener((v, actionId, event) -> {
             String query = Objects.requireNonNull(omniBox_text.getText()).toString().trim();
             ninjaWebView.loadUrl(query);
             return false;
-        });
-        omniBox_text.setOnFocusChangeListener((v, hasFocus) -> {
-            if (omniBox_text.hasFocus()) {
-                omnibox_close.setVisibility(View.VISIBLE);
-                list_search.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                omnibox_overflow.setVisibility(View.GONE);
-                omniBox_overview.setVisibility(View.GONE);
-                omniBox_tab.setVisibility(View.GONE);
-                String url = ninjaWebView.getUrl();
-                ninjaWebView.stopLoading();
-                omniBox_text.setKeyListener(listener);
-                if (url == null || url.isEmpty()) omniBox_text.setText("");
-                else omniBox_text.setText(url);
-                initSearch();
-                omniBox_text.selectAll(); }
-            else {
-                HelperUnit.hideSoftKeyboard(omniBox_text, context);
-                omnibox_close.setVisibility(View.GONE);
-                list_search.setVisibility(View.GONE);
-                omnibox_overflow.setVisibility(View.VISIBLE);
-                omniBox_overview.setVisibility(View.VISIBLE);
-                omniBox_tab.setVisibility(View.VISIBLE);
-                omniBox_text.setKeyListener(null);
-                omniBox_text.setEllipsize(TextUtils.TruncateAt.END);
-                omniBox_text.setText(ninjaWebView.getTitle());
-                updateOmniBox(); }
         });
         omniBox_overview.setOnClickListener(v -> showOverview());
         omniBox_overview.setOnLongClickListener(v -> {
@@ -888,7 +910,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             else omniBox_text.setText(ninjaWebView.getTitle());
 
             if (url.startsWith("https://") || url.contains("about:blank") || listTrusted.isWhite(url))
-                omniBox_tab.setOnClickListener(v -> showTabView());
+            omniBox_tab.setOnClickListener(v -> showTabView());
             else if (url.isEmpty()) {
                 omniBox_tab.setOnClickListener(v -> showTabView());
                 omniBox_text.setText(""); }

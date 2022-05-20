@@ -36,6 +36,8 @@ public class SwipeTouchListener implements OnTouchListener {
     public void onSwipeBottom() {
     }
 
+    public void onTap() {}
+
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_THRESHOLD = 100;
@@ -43,6 +45,12 @@ public class SwipeTouchListener implements OnTouchListener {
 
         @Override
         public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            onTap();
             return false;
         }
 

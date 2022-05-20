@@ -120,7 +120,6 @@
                     android:hint="@string/main_omnibox_input_hint"
                     android:imeOptions="actionGo"
                     android:inputType="textUri"
-                    android:selectAllOnFocus="true"
                     android:singleLine="true"
                     android:textAppearance="?attr/textAppearanceTitleMedium"
                     android:textStyle="bold" />
