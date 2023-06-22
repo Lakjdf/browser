@@ -1,12 +1,16 @@
 package de.baumann.browser.view;
 
+import static androidx.constraintlayout.motion.utils.Oscillator.TAG;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -43,6 +47,14 @@ public class GridAdapter extends BaseAdapter {
             holder.title = view.findViewById(R.id.menuEntry);
             holder.title.setText(text);
             holder.cardView = view.findViewById(R.id.menuCardView);
+            holder.iconMenu = view.findViewById(R.id.iconMenu);
+
+            try {
+                holder.iconMenu.setImageResource(item.getData());
+            } catch (Exception e) {
+                Log.i(TAG, "Exception:" + e);
+            }
+
             if (text.equals(sp.getString("icon_01", context.getResources().getString(R.string.color_red)))) holder.cardView.setCardBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.red, null));
             else if (text.equals(sp.getString("icon_02", context.getResources().getString(R.string.color_pink)))) holder.cardView.setCardBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.pink, null));
             else if (text.equals(sp.getString("icon_03", context.getResources().getString(R.string.color_purple)))) holder.cardView.setCardBackgroundColor(ResourcesCompat.getColor(context.getResources(), R.color.purple, null));
@@ -58,12 +70,14 @@ public class GridAdapter extends BaseAdapter {
                 TypedValue typedValue = new TypedValue();
                 context.getTheme().resolveAttribute(R.attr.colorSurfaceVariant, typedValue, true);
                 int color = typedValue.data;
-                holder.cardView.setCardBackgroundColor(color);}
-            else {
+                holder.cardView.setCardBackgroundColor(color);
+            } else {
                 TypedValue typedValue = new TypedValue();
                 context.getTheme().resolveAttribute(android.R.color.transparent, typedValue, true);
                 int color = typedValue.data;
-                holder.cardView.setCardBackgroundColor(color);}
+                holder.iconMenu.setVisibility(View.VISIBLE);
+                holder.cardView.setCardBackgroundColor(color);
+            }
             view.setTag(holder);
         }
         return view;
@@ -87,5 +101,6 @@ public class GridAdapter extends BaseAdapter {
     private static class Holder {
         TextView title;
         CardView cardView;
+        ImageView iconMenu;
     }
 }

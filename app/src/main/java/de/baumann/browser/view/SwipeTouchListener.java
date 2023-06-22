@@ -38,11 +38,13 @@ public class SwipeTouchListener implements OnTouchListener {
 
     public void onTap() {}
 
+    @SuppressWarnings("NullableProblems")
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
+        @SuppressWarnings("NullableProblems")
         @Override
         public boolean onDown(MotionEvent e) {
             return false;
@@ -79,6 +81,8 @@ public class SwipeTouchListener implements OnTouchListener {
                     exception.printStackTrace();
                 }
             }
+            assert e1 != null;
+            assert e2 != null;
             return super.onFling(e1, e2, velocityX, velocityY);
         }
     }
