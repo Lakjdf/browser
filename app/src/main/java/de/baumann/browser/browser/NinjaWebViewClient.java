@@ -540,8 +540,8 @@ public class NinjaWebViewClient extends WebViewClient {
         String message;
         switch (error.getPrimaryError()) {
             case SslError.SSL_UNTRUSTED:
-                message = "\"Certificate authority is not trusted.\"";
-                break;
+                // message = "\"Certificate authority is not trusted.\"";
+                return; // disabled as they are reported incorrectly too often
             case SslError.SSL_EXPIRED:
                 message = "\"Certificate has expired.\"";
                 break;
